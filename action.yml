@@ -11,26 +11,9 @@ inputs:
     required: false
     default: '21'
 
-  artifact:
-    description: 'The artifact to download. That is the test source code.'
-    required: false
-
-  test_config:
-    description: 'The test configuration file to use.'
-    required: false
-
   test_name:
     description: 'The name of the test suite.'
     required: true
-
-  branch_name:
-    description: 'The branch name to switch to.'
-    required: false
-
-  appium_port:
-    description: 'The port on which the Appium server should run.'
-    required: false
-    default: '4723'
 
   scripts:
     description: 'The maven commands to execute the test.'
@@ -38,22 +21,7 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Download artifact
-      if: ${{ inputs.artifact != '' }}
-      uses: actions/download-artifact@v4
-      with:
-        name: ${{ inputs.artifact}}
-        path: CheckoutFolder
-
-    - name: Switch to another branch
-      if: ${{ inputs.branch_name != '' }}
-      run: |
-        cd CheckoutFolder
-        git checkout ${{ inputs.branch_name }}
-      shell: bash
-
     - name: Checkout code
-      if: ${{ inputs.artifact == '' }}
       uses: actions/checkout@v2
 
     - name: Set up JDK
@@ -92,30 +60,17 @@ runs:
 
     - name: Start Appium server
       run: |
-        nohup appium -a 0.0.0.0 -p ${{ inputs.appium_port }} -pa /wd/hub > appium_log.txt 2>&1 & > /dev/null 2>&1
+        nohup appium -a 0.0.0.0 -p 4723 -pa /wd/hub > appium_log.txt 2>&1 & > /dev/null 2>&1
       shell: bash
 
     - name: Install dependencies
       run: |
-        if [ "${{ inputs.artifact }}" != "" ]; then
-          cd CheckoutFolder
-        fi
         mvn install -DskipTests > /dev/null 2>&1
       shell: bash
 
     - name: Run Appium tests with Maven
       run: |
-        if [ "${{ inputs.artifact }}" != "" ]; then
-          cd CheckoutFolder
-        fi
-        if [ -z "${{ inputs.scripts }}" ]; then
-          mvn test "-DsuiteFile=${{ inputs.test_config }}" "-Dudid=emulator-5554" "-DappiumPort=${{ inputs.appium_port }}"
-        else
-          # Ensure that the script is only run if it's not empty
-          if [ -n "${{ inputs.scripts }}" ]; then
-            ${!{ inputs.scripts }}
-          fi
-        fi
+        eval "${{ inputs.scripts }}"
       shell: bash
 
     - name: Appium log
