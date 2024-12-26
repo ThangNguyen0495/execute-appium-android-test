@@ -87,9 +87,3 @@ runs:
           **/target/BufferLog.log
           **/target/ExtentReport.html
           **/recording_video
-
-    - name: Remove cloned repo
-      if: ${{ inputs.artifact != '' }}
-      run: |
-        rm -r CheckoutFolder
-      shell: bash
