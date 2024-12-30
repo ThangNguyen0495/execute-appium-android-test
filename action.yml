@@ -6,6 +6,11 @@ inputs:
     required: false
     default: '22'
 
+  api_level:
+    description: 'The SDK level'
+    required: false
+    default: '35'
+
   node_version:
     description: 'The version of NodeJS to install.'
     required: false
@@ -44,6 +49,8 @@ runs:
 
     - name: Create and start emulator
       uses: ThangNguyen0495/create-android-emulator@v1.0.0
+      with:
+        api-level: ${{ inputs.api_level }}
 
     - name: Set up Node.js
       uses: actions/setup-node@v3
