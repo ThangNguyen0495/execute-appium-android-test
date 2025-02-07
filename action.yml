@@ -74,39 +74,6 @@ runs:
       uses: ThangNguyen0495/create-android-emulator@v1.0.0
       with:
         api-level: ${{ inputs.api_level }}
-      
-    - name: Restart the ADB server before starting the test
-      run: |
-        $ANDROID_HOME/platform-tools/adb kill-server
-        $ANDROID_HOME/platform-tools/adb start-server
-      shell: bash
-
-    - name: Start Android emulator
-      run: |
-        nohup $HOME/android-sdk/emulator/emulator -avd emu -no-metrics -no-snapshot-save -no-boot-anim -wipe-data -no-window -gpu off &
-        $ANDROID_HOME/platform-tools/adb wait-for-device
-        
-        max_retries=30
-        attempt=0
-        
-        while [ "$($ANDROID_HOME/platform-tools/adb shell getprop sys.boot_completed | tr -d '\r')" != "1" ] && [ $attempt -lt $max_retries ]; do
-            echo "Waiting for emulator to fully boot... Attempt $((attempt + 1))/$max_retries"
-            sleep 1
-            attempt=$((attempt + 1))
-        done
-
-        if [ $attempt -ge $max_retries ]; then
-            echo "Emulator failed to boot after $max_retries attempts."
-            exit 1
-        else
-            echo "Emulator booted successfully."
-        fi
-      shell: bash
-
-    - name: Check list devices
-      run: |
-        $ANDROID_HOME/platform-tools/adb devices
-      shell: bash
 
     - name: Run Appium tests with Maven
       run: |
