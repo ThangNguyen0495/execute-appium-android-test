@@ -74,6 +74,12 @@ runs:
       run: |
         mvn install -DskipTests > /dev/null 2>&1
       shell: bash
+      
+    - name: Restart the ADB server before starting the test
+      run: |
+        $ANDROID_HOME/platform-tools/adb kill-server
+        $ANDROID_HOME/platform-tools/adb start-server
+      shell: bash
 
     - name: Run Appium tests with Maven
       run: |
