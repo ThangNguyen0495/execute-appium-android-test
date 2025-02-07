@@ -52,6 +52,11 @@ runs:
       with:
         node-version: ${{ inputs.node_version }}
 
+    - name: Create and start emulator
+      uses: ThangNguyen0495/create-android-emulator@v1.0.0
+      with:
+        api-level: ${{ inputs.api_level }}
+
     - name: Install Appium
       run: npm install -g appium > /dev/null 2>&1
       shell: bash
@@ -69,11 +74,6 @@ runs:
       run: |
         mvn install -DskipTests > /dev/null 2>&1
       shell: bash
-
-    - name: Create and start emulator
-      uses: ThangNguyen0495/create-android-emulator@v1.0.0
-      with:
-        api-level: ${{ inputs.api_level }}
 
     - name: Run Appium tests with Maven
       run: |
