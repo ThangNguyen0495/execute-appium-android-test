@@ -82,6 +82,7 @@ runs:
       continue-on-error: true  # Allows the next step to run even if this one fails
       
     - name: Check logs and restart emulator if needed
+      if: failure()
       run: |
         if grep -q "SessionNotCreated Could not start a new session." appium_log.txt; then
           echo "⚠️ Detected 'SessionNotCreated' error, restarting ADB and Emulator..."
