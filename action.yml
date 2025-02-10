@@ -53,7 +53,7 @@ runs:
         node-version: ${{ inputs.node_version }}
 
     - name: Create and start emulator
-      uses: ThangNguyen0495/create-android-emulator@v1.0.0
+      uses: ThangNguyen0495/create-android-emulator@main
       with:
         api-level: ${{ inputs.api_level }}
 
