@@ -77,13 +77,13 @@ runs:
 
     - name: Run Appium tests and capture logs
       run: |
-        stdbuf -oL -eL eval "${{ inputs.scripts }}" 2>&1 | tee appium.log
+        eval "${{ inputs.scripts }}
       shell: bash
       continue-on-error: true  # Allows the next step to run even if this one fails
       
     - name: Check logs and restart emulator if needed
       run: |
-        if grep -q "SessionNotCreated Could not start a new session." appium.log; then
+        if grep -q "SessionNotCreated Could not start a new session." appium_log.txt; then
           echo "⚠️ Detected 'SessionNotCreated' error, restarting ADB and Emulator..."
     
           echo "Force stopping the emulator..."
