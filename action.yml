@@ -83,7 +83,7 @@ runs:
     - name: Check logs and restart emulator if needed
       if: failure()
       run: |
-        if grep -q "SessionNotCreated Could not start a new session." appium_log.txt; then
+        if grep -q "Command output: adb: device offline" appium_log.txt; then
           echo "⚠️ Detected 'SessionNotCreated' error, restarting ADB and Emulator..."
     
           echo "Force stopping the emulator..."
@@ -111,7 +111,7 @@ runs:
           echo "Retrying test..."
           eval "${{ inputs.scripts }}" || { echo "❌ Test failed even after retry!"; exit 1; }
         else
-          echo "✅ No 'SessionNotCreated' error found, skipping emulator restart."
+          echo "✅ No 'Command output: adb: device offline' error found, skipping emulator restart."
           exit 1
         fi
       shell: bash
