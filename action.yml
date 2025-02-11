@@ -92,7 +92,7 @@ runs:
           sleep 5
     
           echo "Starting emulator again..."
-          nohup $HOME/android-sdk/emulator/emulator -avd emu -gpu swiftshader_indirect -no-snapshot-load -no-snapshot-save -no-boot-anim -wipe-data > emulator.log 2>&1 &
+          nohup $HOME/android-sdk/emulator/emulator -avd emu -no-metrics -no-snapshot-load -no-snapshot-save -no-boot-anim -wipe-data -no-window -gpu swiftshader_indirect -delay-adb > emulator.log 2>&1 &
           disown
     
           echo "Waiting for emulator to come online..."
