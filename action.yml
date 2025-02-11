@@ -83,7 +83,7 @@ runs:
     - name: Check logs and restart emulator if needed
       if: failure()
       run: |
-        tee appium_log.txt
+        cat appium_log.txt
         if grep -q "Command output: adb: device offline" appium_log.txt; then
           echo "⚠️ Detected 'SessionNotCreated' error, restarting ADB and Emulator..."
     
