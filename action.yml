@@ -77,14 +77,13 @@ runs:
 
     - name: Run Appium tests and capture logs
       run: |
-        eval "${{ inputs.scripts }}"
+        eval "${{ inputs.scripts }}" | tee terminal_log.txt
       shell: bash
       
     - name: Check logs and restart emulator if needed
       if: failure()
       run: |
-        cat appium_log.txt
-        if grep -q "Command output: adb: device offline" appium_log.txt; then
+        if grep -q "Command output: adb: device offline" terminal_log.txt; then
           echo "⚠️ Detected 'SessionNotCreated' error, restarting ADB and Emulator..."
     
           echo "Force stopping the emulator..."
