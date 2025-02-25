@@ -83,8 +83,8 @@ runs:
     - name: Check logs and restart emulator if needed
       if: failure()
       run: |
-        if grep -q "org.openqa.selenium.WebDriverException" terminal_log.txt; then
-          echo "⚠️ Detected 'SessionNotCreated' error, restarting ADB and Emulator..."
+        if grep -q -e "org.openqa.selenium.WebDriverException" -e "org.openqa.selenium.SessionNotCreatedException" terminal_log.txt; then
+          echo "⚠️ Detected 'SessionNotCreated/WebDriverException' error, restarting ADB and Emulator..."
     
           echo "Force stopping the emulator..."
           adb emu kill
@@ -111,7 +111,7 @@ runs:
           echo "Retrying test..."
           eval "${{ inputs.scripts }}" || { echo "❌ Test failed even after retry!"; exit 1; }
         else
-          echo "✅ No 'org.openqa.selenium.WebDriverException' error found, skipping emulator restart."
+          echo "✅ No 'SessionNotCreated/WebDriverException' error found, skipping emulator restart."
           exit 1
         fi
       shell: bash
