@@ -79,42 +79,6 @@ runs:
       run: |
         eval "${{ inputs.scripts }}" | tee terminal_log.txt
       shell: bash
-      
-    - name: Check logs and restart emulator if needed
-      if: failure()
-      run: |
-        if grep -q -e "org.openqa.selenium.WebDriverException" -e "org.openqa.selenium.SessionNotCreatedException" terminal_log.txt; then
-          echo "⚠️ Detected 'SessionNotCreated/WebDriverException' error, restarting ADB and Emulator..."
-    
-          echo "Force stopping the emulator..."
-          adb emu kill
-          sleep 5
-    
-          echo "Starting emulator again..."
-          nohup $HOME/android-sdk/emulator/emulator -avd emu -no-metrics -no-snapshot-load -no-snapshot-save -no-boot-anim -wipe-data -no-window -gpu swiftshader_indirect -delay-adb > emulator.log 2>&1 &
-          disown
-    
-          echo "Waiting for emulator to come online..."
-          $ANDROID_HOME/platform-tools/adb wait-for-device
-    
-          echo "Checking if the emulator is fully booted..."
-          boot_completed=""
-          while [ "$boot_completed" != "1" ]; do
-            sleep 5
-            boot_completed=$($ANDROID_HOME/platform-tools/adb shell getprop sys.boot_completed 2>/dev/null)
-            echo "Still waiting for emulator to boot fully..."
-          done
-    
-          echo "Emulator is fully booted!"
-          $ANDROID_HOME/platform-tools/adb devices
-    
-          echo "Retrying test..."
-          eval "${{ inputs.scripts }}" || { echo "❌ Test failed even after retry!"; exit 1; }
-        else
-          echo "✅ No 'SessionNotCreated/WebDriverException' error found, skipping emulator restart."
-          exit 1
-        fi
-      shell: bash
   
     - name: Upload Test Report
       if: always()
